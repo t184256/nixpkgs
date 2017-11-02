@@ -80,6 +80,11 @@ stdenv.mkDerivation rec {
         url = "https://github.com/systemd/systemd/commit/58a78ae77063eddfcd23ea272bd2e0ddc9ea3ff7.patch";
         sha256 = "0g3pvqigs69mciw6lj3zg12dmxnhwxndwxdjg78af52xrp0djfg8";
     })
+    # TODO: Remove when btrfs unlock and mount.btrfs agree on a keyring
+    (fetchpatch {
+        url = "https://github.com/systemd/systemd/commit/437a85112e02042b62751395b9e7225628c1b708.patch";
+        sha256 = "040a08wipjdz24wwh2m5xzj7kk6jnjrbpcbvdfbrdcgv6j5qcmpp";
+    })
   ];
 
   preConfigure =
