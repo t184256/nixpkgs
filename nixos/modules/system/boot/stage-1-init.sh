@@ -386,7 +386,8 @@ waitDevice() {
     # appear.
     if test ! -e $device; then
         echo -n "waiting for device $device to appear..."
-        try=20
+	# hack: on guarana the root device is tiered and I'm tired of waiting for it
+        try=5
         while [ $try -gt 0 ]; do
             sleep 1
             # also re-try lvm activation now that new block devices might have appeared
@@ -496,6 +497,9 @@ while read -u 3 mountPoint; do
       rmdir /tmp-iso
       continue
     fi
+
+    # hack: on guarana encrypted bcachefs / needs an unlock
+    bcachefs unlock "/dev/sdb2"
 
     mountFS "$device" "$mountPoint" "$options" "$fsType"
 done

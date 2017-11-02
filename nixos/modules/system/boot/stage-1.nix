@@ -82,6 +82,10 @@ let
         copy_bin_and_libs ${pkgs.e2fsprogs}/sbin/resize2fs
       ''}
 
+      # Copy bcachefs.
+      copy_bin_and_libs ${pkgs.bcachefs-tools}/bin/bcachefs
+      copy_bin_and_libs ${pkgs.bcachefs-tools}/bin/fsck.bcachefs
+
       # Copy secrets if needed.
       ${optionalString (!config.boot.loader.supportsInitrdSecrets)
           (concatStringsSep "\n" (mapAttrsToList (dest: source:
