@@ -393,6 +393,8 @@ makeScopeWithSplicing' {
 
       # This is an "oddly ordered" bootstrap just for Darwin. Probably
       # don't want it otherwise.
+      # Also used on Android to get compiler-rt-libc building without
+      # compiler-rt-no-libc and libunwind.
       clangNoCompilerRtWithLibc = wrapCCWith rec {
         cc = self.clang-unwrapped;
         libcxx = null;
@@ -415,7 +417,13 @@ makeScopeWithSplicing' {
             if args.stdenv.hostPlatform.isDarwin then
               overrideCC darwin.bootstrapStdenv buildLlvmPackages.clangWithLibcAndBasicRtAndLibcxx
             else if args.stdenv.hostPlatform.useLLVM or false then
-              overrideCC args.stdenv buildLlvmPackages.clangWithLibcAndBasicRtAndLibcxx
+                if args.stdenv.hostPlatform.isAndroid then
+                  # compiler-rt-no-libc isn't needed for compiler-rt-libc's build on Android
+                  overrideCC args.stdenv buildLlvmPackages.clangNoCompilerRtWithLibc
+                else
+                  # `libxcrypt` fails to build without compiler-rt
+                  # See: https://github.com/NixOS/nixpkgs/pull/431477#discussion_r2263654078
+                  overrideCC args.stdenv buildLlvmPackages.clangWithLibcAndBasicRtAndLibcxx
             else
               args.stdenv;
         in
